@@ -1,48 +1,105 @@
 package com.example.tender
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.yuyakaido.android.cardstackview.CardStackLayoutManager
-import com.yuyakaido.android.cardstackview.CardStackView
+import android.util.Log
+import android.view.View
+import android.widget.Button
+import com.google.gson.Gson
+import com.yuyakaido.android.cardstackview.*
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
-class MainActivity : AppCompatActivity() {
+
+data class YelpResponse(
+    val businesses: List<Business>
+)
+
+data class Business(
+    val name: String,
+    val alias : String,
+    val location: Location,
+    val rating: Double,  // Assuming rating is a double
+    val image_url: String,  // URL to the business image
+    val reviews: List<Review>, // Assuming a list of reviews
+    val photos: List<String>
+)
+
+data class Review(
+    val user: User,
+    val text: String,
+    val rating: Int
+)
+
+data class User(
+    val name: String,
+    val image_url: String
+)
+data class Location(
+    val address1: String,
+    val city: String,
+    val zip_code: String
+)
+
+class MainActivity : AppCompatActivity(), CardStackListener {
     private val client = OkHttpClient()
     private val apiKey = "ZfWb7NOfgmB3jlHdqQtcxW-XlFPkVTggHBL8Ddr5S2s_4mAhCecID02p_np2D2Rz7C03nA01ZUxhdYFd_qMPPb_O2I3fsuJlapLfShGTGCYNuW2NpVKwE2TvxTRUZXYx"
+
+    private lateinit var cardStackView: CardStackView
+    private lateinit var adapter: BusinessCardAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Test cases
+        adapter = BusinessCardAdapter(emptyList()) { business ->
+            fetchBusinessDetails(business.alias)
+        }
+
+        cardStackView = findViewById(R.id.card_stack_view)
+        cardStackView.adapter = adapter  // Set the adapter to the CardStackView
+        setupCardStackView()
+
         val testData = listOf(
-            Pair("coffee", "New York City"),
-            Pair("Italian restaurant", "Chicago"),
-            Pair("gym", "Los Angeles"),
-            Pair("bookstore", "Seattle"),
-            Pair("bakery", "Paris"),
-            Pair("sushi", "Tokyo"),
-            Pair("nightlife", "Las Vegas"),
-            Pair("art gallery", "London"),
-            Pair("spa", "Bali"),
-            Pair("vegan restaurant", "San Francisco")
+            Pair("coffee", "New York City")
+            // Add more test data if needed
         )
 
-        // Loop through each test case and call the getYelpData function asynchronously
         testData.forEach { (term, location) ->
             CoroutineScope(Dispatchers.IO).launch {
-                val result = getYelpData(term, location)
+                val yelpData = getYelpData(term, location)
                 withContext(Dispatchers.Main) {
-                    println("Searching for $term in $location:")
-                    println(result)
-                    println("--------------------------------------------------")
+                    yelpData?.businesses?.let { businesses ->
+                        adapter.updateData(businesses)
+                    }
                 }
             }
         }
+
+        findViewById<Button>(R.id.btnLike).setOnClickListener { swipeCard(Direction.Right) }
+        findViewById<Button>(R.id.btnDislike).setOnClickListener { swipeCard(Direction.Left) }
+        findViewById<Button>(R.id.btnSuperLike).setOnClickListener { swipeCard(Direction.Top) }
     }
 
-    private suspend fun getYelpData(term: String, location: String): String {
+    private fun setupCardStackView() {
+        val manager = CardStackLayoutManager(this, this)
+        manager.setStackFrom(StackFrom.None)
+        manager.setVisibleCount(3)
+        manager.setSwipeableMethod(SwipeableMethod.AutomaticAndManual)
+        manager.setDirections(Direction.FREEDOM)
+        cardStackView.layoutManager = manager
+    }
+
+    private fun swipeCard(direction: Direction) {
+        val setting = SwipeAnimationSetting.Builder()
+            .setDirection(direction)
+            .build()
+        (cardStackView.layoutManager as CardStackLayoutManager).setSwipeAnimationSetting(setting)
+        cardStackView.swipe()
+    }
+
+    private suspend fun getYelpData(term: String, location: String): YelpResponse? {
         val url = "https://api.yelp.com/v3/businesses/search?term=$term&location=$location"
         val request = Request.Builder()
             .url(url)
@@ -51,10 +108,52 @@ class MainActivity : AppCompatActivity() {
 
         return client.newCall(request).execute().use { response ->
             if (response.isSuccessful) {
-                response.body?.string() ?: "No response body"
+                val responseBody = response.body?.string()
+                Log.d("YelpData", "Response: $responseBody")
+                Gson().fromJson(responseBody, YelpResponse::class.java)
             } else {
-                "Failed to get data: ${response.message}"
+                Log.e("YelpData", "Failed to get data: ${response.message}")
+                null
             }
         }
     }
+
+    private fun fetchBusinessDetails(businessId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val businessDetails = getYelpBusinessDetails(businessId)
+            withContext(Dispatchers.Main) {
+                businessDetails?.let { business ->
+                    BusinessDetailsFragment.newInstance(business).show(supportFragmentManager, "businessDetails")
+                }
+            }
+        }
+    }
+
+    private suspend fun getYelpBusinessDetails(businessId: String): Business? {
+        val url = "https://api.yelp.com/v3/businesses/$businessId"
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $apiKey")
+            .build()
+
+        return client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                Log.d("YelpBusinessDetails", "Response: $responseBody")
+                Gson().fromJson(responseBody, Business::class.java)
+            } else {
+                Log.e("YelpBusinessDetails", "Failed to get data: ${response.message}")
+                null
+            }
+        }
+    }
+    // CardStackListener methods
+    override fun onCardSwiped(direction: Direction?) {
+        // Handle card swipe event
+    }
+    override fun onCardDragging(direction: Direction?, ratio: Float) {}
+    override fun onCardRewound() {}
+    override fun onCardCanceled() {}
+    override fun onCardAppeared(view: View?, position: Int) {}
+    override fun onCardDisappeared(view: View?, position: Int) {}
 }
