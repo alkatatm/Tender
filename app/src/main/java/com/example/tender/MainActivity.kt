@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.yuyakaido.android.cardstackview.*
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
@@ -22,10 +23,9 @@ data class Business(
     val location: Location,
     val rating: Double,  // Assuming rating is a double
     val image_url: String,  // URL to the business image
-    val reviews: List<Review>, // Assuming a list of reviews
+    var reviews: List<Review>,// Assuming a list of reviews
     val photos: List<String>
 )
-
 data class Review(
     val user: User,
     val text: String,
@@ -121,8 +121,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private fun fetchBusinessDetails(businessId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val businessDetails = getYelpBusinessDetails(businessId)
+            val reviews = getBusinessReviews(businessId)
+
             withContext(Dispatchers.Main) {
                 businessDetails?.let { business ->
+                    business.reviews = reviews
                     BusinessDetailsFragment.newInstance(business).show(supportFragmentManager, "businessDetails")
                 }
             }
@@ -130,21 +133,40 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     }
 
     private suspend fun getYelpBusinessDetails(businessId: String): Business? {
-        val url = "https://api.yelp.com/v3/businesses/$businessId"
+        val businessDetailsUrl = "https://api.yelp.com/v3/businesses/$businessId"
+        val businessDetailsRequest = Request.Builder()
+            .url(businessDetailsUrl)
+            .addHeader("Authorization", "Bearer $apiKey")
+            .build()
+
+
+        // Execute business details request
+        val businessDetailsResponse = client.newCall(businessDetailsRequest).execute()
+        val business = if (businessDetailsResponse.isSuccessful) {
+            Gson().fromJson(businessDetailsResponse.body?.string(), Business::class.java)
+        } else {
+            Log.e("YelpBusinessDetails", "Failed to get business details: ${businessDetailsResponse.message}")
+            return null
+        }
+
+
+        return business
+    }
+
+    private suspend fun getBusinessReviews(businessId: String): List<Review> {
+        val url = "https://api.yelp.com/v3/businesses/$businessId/reviews"
         val request = Request.Builder()
             .url(url)
             .addHeader("Authorization", "Bearer $apiKey")
             .build()
 
-        return client.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                Log.d("YelpBusinessDetails", "Response: $responseBody")
-                Gson().fromJson(responseBody, Business::class.java)
-            } else {
-                Log.e("YelpBusinessDetails", "Failed to get data: ${response.message}")
-                null
-            }
+        val response = client.newCall(request).execute()
+        return if (response.isSuccessful) {
+            val reviewsResponse = Gson().fromJson(response.body?.string(), Business::class.java)
+            reviewsResponse.reviews
+        } else {
+            Log.e("YelpBusinessReviews", "Failed to get reviews: ${response.message}")
+            emptyList()
         }
     }
     // CardStackListener methods
