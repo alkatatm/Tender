@@ -24,7 +24,8 @@ data class Business(
     val rating: Double,  // Assuming rating is a double
     val image_url: String,  // URL to the business image
     var reviews: List<Review>,// Assuming a list of reviews
-    val photos: List<String>
+    val photos: List<String>,
+    val coordinates: Coordinates
 )
 data class Review(
     val user: User,
@@ -42,6 +43,10 @@ data class Location(
     val zip_code: String
 )
 
+data class  Coordinates(
+    val latitude: Double,
+    val longitude: Double
+)
 class MainActivity : AppCompatActivity(), CardStackListener {
     private val client = OkHttpClient()
     private val apiKey = "ZfWb7NOfgmB3jlHdqQtcxW-XlFPkVTggHBL8Ddr5S2s_4mAhCecID02p_np2D2Rz7C03nA01ZUxhdYFd_qMPPb_O2I3fsuJlapLfShGTGCYNuW2NpVKwE2TvxTRUZXYx"
