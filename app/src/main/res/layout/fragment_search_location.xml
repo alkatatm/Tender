@@ -18,18 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/etSearch"
-        android:layout_toLeftOf="@+id/btnGetCurrentLocation"
         android:hint="Location"
         android:inputType="text"/>
 
     <!-- Get Current Location Button -->
-    <Button
-        android:id="@+id/btnGetCurrentLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignBottom="@id/etLocation"
-        android:drawableEnd="@android:drawable/ic_dialog_map" />
     <Button
         android:id="@+id/btnConfirm"
         android:layout_width="wrap_content"

@@ -113,6 +113,10 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             Log.d("MainActivity", "Portrait mode")
         }
         setContentView(R.layout.activity_main)
+        setupCardStackView()
+        loadPreferencesAndRefreshData()
+        setupFABAndButtons()
+
     }
     private fun setupCardStackView() {
         cardStackView = findViewById<CardStackView>(R.id.card_stack_view).apply {

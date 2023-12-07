@@ -29,7 +29,7 @@
         android:layout_below="@id/toolbar"
         android:orientation="vertical"
         android:gravity="end"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/btnLike"
@@ -69,7 +69,7 @@
     <com.yuyakaido.android.cardstackview.CardStackView
         android:id="@+id/card_stack_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_toStartOf="@+id/buttonContainer"
         android:layout_below="@+id/toolbar"
         android:layout_marginStart="16dp"
