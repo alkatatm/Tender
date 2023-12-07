@@ -1,5 +1,6 @@
 package com.example.tender
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
+import me.relex.circleindicator.CircleIndicator3
 
 class BusinessDetailsFragment : DialogFragment() {
 
@@ -34,6 +36,7 @@ class BusinessDetailsFragment : DialogFragment() {
             business = Gson().fromJson(it, Business::class.java)
         }
     }
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_business_details, container, false)
         val reviewsLayout = view.findViewById<LinearLayout>(R.id.layoutReviews)
@@ -41,6 +44,7 @@ class BusinessDetailsFragment : DialogFragment() {
         val tvBusinessLocation = view.findViewById<TextView>(R.id.tvBusinessLocation)
         val viewPager = view.findViewById<ViewPager2>(R.id.viewPagerImages)
         val yelpStars = view.findViewById<ImageView>(R.id.yelpStars)
+        val indicator = view.findViewById<CircleIndicator3>(R.id.indicator)
         business?.let {
             tvBusinessName.text = it.name
             tvBusinessLocation.text = "${it.location.address1}, ${it.location.city}, ${it.location.zip_code}"
@@ -49,11 +53,12 @@ class BusinessDetailsFragment : DialogFragment() {
             if (it.photos.isNotEmpty()) {
                 val adapter = ImageAdapter(it.photos)
                 viewPager.adapter = adapter
+                indicator.setViewPager(viewPager)
             } else {
                 // Handle case when there are no photos
             }
-        }
 
+        }
         mapView = view.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
 

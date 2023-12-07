@@ -1,8 +1,5 @@
 package com.example.tender
 
-import android.content.Intent
-import android.media.Image
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +13,6 @@ class BusinessCardAdapter(
     private val onImageClicked: (Business) -> Unit
 ) : RecyclerView.Adapter<BusinessCardAdapter.ViewHolder>() {
 
-    private val TAG = "BusinessCardAdapter" // Tag used for Log messages
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvBusinessName: TextView = view.findViewById(R.id.tvBusinessName)
@@ -38,11 +34,16 @@ class BusinessCardAdapter(
         }
     }
 
+    fun getBusinessAt(position: Int): Business? {
+        return if (position >= 0 && position < businesses.size) {
+            businesses[position]
+        } else null
+    }
+
     fun updateData(newBusinesses: List<Business>) {
         businesses = newBusinesses
         notifyDataSetChanged()
     }
-
     override fun getItemCount(): Int = businesses.size
 }
 

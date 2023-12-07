@@ -12,4 +12,6 @@
     <color name="orange_0.9">#ea8a59</color>
     <color name="yellow_0.9">#fddc89</color>
     <color name="white_0.8">#fef6e3</color>
+    <color name="colorPrimary">#FF6200EE</color>
+    <color name="colorAccent">#FF03DAC5</color>
 </resources>

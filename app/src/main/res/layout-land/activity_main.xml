@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -21,36 +20,36 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
 
-
-
     <LinearLayout
         android:id="@+id/buttonContainer"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:layout_below="@id/toolbar"
+        android:orientation="vertical"
+        android:gravity="end"
         android:padding="16dp">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/btnDislike"
-            android:layout_width="128dp"
-            android:layout_height="72dp"
-            app:lottie_rawRes="@raw/dislike" />
+            android:id="@+id/btnLike"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_rawRes="@raw/like2"
+            android:layout_marginBottom="8dp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/btnSuperLike"
-            android:layout_width="128dp"
-            android:layout_height="72dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             app:lottie_rawRes="@raw/superlike"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginBottom="8dp" />
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/btnLike"
-            android:layout_width="128dp"
-            android:layout_height="72dp"
-            app:lottie_rawRes="@raw/like2"
-            android:layout_marginEnd="8dp" />
+            android:id="@+id/btnDislike"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:lottie_rawRes="@raw/dislike" />
 
     </LinearLayout>
 
@@ -58,22 +57,24 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="131dp"
         android:layout_height="54dp"
-        android:layout_alignRight="@id/toolbar"
-        android:layout_marginStart="4dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="7dp"
         android:layout_marginBottom="4dp"
         app:lottie_rawRes="@raw/menu2" />
+
 
     <com.yuyakaido.android.cardstackview.CardStackView
         android:id="@+id/card_stack_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/buttonContainer"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/buttonContainer"
+        android:layout_below="@+id/toolbar"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"/>
-
+        android:layout_marginBottom="16dp" />
 
 </RelativeLayout>
