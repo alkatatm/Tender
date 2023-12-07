@@ -6,4 +6,7 @@
     <item
         android:id="@+id/action_choice2"
         android:title="Liked/Disliked"/>
+    <item
+        android:id="@+id/action_choice3"
+        android:title="Logout"/>
 </menu>

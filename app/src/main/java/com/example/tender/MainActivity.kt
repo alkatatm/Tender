@@ -1,14 +1,20 @@
 package com.example.tender
 
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.yuyakaido.android.cardstackview.*
@@ -63,13 +69,19 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private lateinit var superlikeButton: LottieAnimationView
     private lateinit var dislikeButton: LottieAnimationView
     private lateinit var menubutton: LottieAnimationView
+    private lateinit var textview: TextView
     private var isDataLoaded = false
     private var currentSwipedPosition = 0
+
+    private var mGoogleSignInClient: GoogleSignInClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.d("MainActivity", "onCreate started")
+
+
+
 
         dbHelper = DBHelper(this)
         adapter = BusinessCardAdapter(emptyList()) { business ->
@@ -135,10 +147,14 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         findViewById<LottieAnimationView>(R.id.floatingActionButton).setOnClickListener { view ->
             showPopupMenu(view)
         }
+        val intent: Intent = intent
+        val name: String? = intent.getStringExtra("name")
         likeButton = findViewById(R.id.btnLike)
+        textview = findViewById(R.id.tv_name)
         superlikeButton = findViewById(R.id.btnSuperLike)
         dislikeButton = findViewById(R.id.btnDislike)
         menubutton = findViewById(R.id.floatingActionButton)
+        textview.setText("Email : " +name)
         likeButton.setOnClickListener {
             likeButton.playAnimation()
             swipeCard(Direction.Right) }
@@ -335,6 +351,25 @@ class MainActivity : AppCompatActivity(), CardStackListener {
 
                 R.id.action_choice2 -> {
                     showLikedDislikedFragment()
+                    true
+                }
+                R.id.action_choice3 -> {
+                    mGoogleSignInClient?.signOut()?.addOnCompleteListener(this, object : OnCompleteListener<Void> {
+                        override fun onComplete(task: Task<Void>) {
+                            if (task.isSuccessful) {
+                                // Sign out successful, clear user data from SharedPreferences
+                                val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
+                                val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                                editor.clear()
+                                editor.apply()
+
+                                val intent = Intent(this@MainActivity, SplashActivity::class.java)
+                                startActivity(intent)
+                                finish()
+
+                            }
+                        }
+                    })
                     true
                 }
 
