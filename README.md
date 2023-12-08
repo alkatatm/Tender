@@ -12,3 +12,6 @@ Submission for CPSC 411, Section 01, Final Project
 * Name: Edgardo Arteaga
 * CWID: 885891770
 * Email: edgardoarteaga@csu.fullerton.edu
+* Name: Balaji Sai Charan Jalukuru
+* CWID: 885177295
+* Email: charanjalukuru@csu.fullerton.edu
