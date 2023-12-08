@@ -13,6 +13,7 @@
         android:visibility="gone"
         android:layout_centerInParent="true" />
 
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -20,8 +21,6 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
-
-
 
     <LinearLayout
         android:id="@+id/buttonContainer"
@@ -67,10 +66,15 @@
 
     <TextView
         android:id="@+id/tv_name"
-        android:layout_width="150dp"
-        android:layout_height="54dp"
+        android:layout_width="wrap_content"
+        android:layout_height="63dp"
         android:layout_gravity="center_horizontal"
-        android:textSize="18sp" />
+        android:background="@drawable/rounded_corner_background"
+        android:fontFamily="sans-serif"
+        android:padding="16dp"
+        android:text="Stylish Text"
+        android:textColor="@android:color/white"
+        android:textSize="24sp" />
 
     <com.yuyakaido.android.cardstackview.CardStackView
         android:id="@+id/card_stack_view"

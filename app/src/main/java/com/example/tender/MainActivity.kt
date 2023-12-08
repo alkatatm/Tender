@@ -12,7 +12,9 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -82,7 +84,7 @@ class MainActivity : AppCompatActivity(), CardStackListener {
 
 
 
-
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         dbHelper = DBHelper(this)
         adapter = BusinessCardAdapter(emptyList()) { business ->
             fetchBusinessDetails(business.alias)
@@ -154,7 +156,7 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         superlikeButton = findViewById(R.id.btnSuperLike)
         dislikeButton = findViewById(R.id.btnDislike)
         menubutton = findViewById(R.id.floatingActionButton)
-        textview.setText("Email : " +name)
+        textview.setText(name)
         likeButton.setOnClickListener {
             likeButton.playAnimation()
             swipeCard(Direction.Right) }
@@ -354,22 +356,8 @@ class MainActivity : AppCompatActivity(), CardStackListener {
                     true
                 }
                 R.id.action_choice3 -> {
-                    mGoogleSignInClient?.signOut()?.addOnCompleteListener(this, object : OnCompleteListener<Void> {
-                        override fun onComplete(task: Task<Void>) {
-                            if (task.isSuccessful) {
-                                // Sign out successful, clear user data from SharedPreferences
-                                val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
-                                val editor: SharedPreferences.Editor = sharedPreferences.edit()
-                                editor.clear()
-                                editor.apply()
-
-                                val intent = Intent(this@MainActivity, SplashActivity::class.java)
-                                startActivity(intent)
-                                finish()
-
-                            }
-                        }
-                    })
+                    Log.d("MainActivity", "selected 3")
+                    handleSignOut()
                     true
                 }
 
@@ -377,6 +365,62 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             }
         }
         popup.show()
+    }
+
+
+//    private fun handleSignOut() {
+//        Log.d("MainActivity", "selected 4")
+//        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this) { task ->
+//            runOnUiThread {
+//                Log.d("MainActivity", "selected 5")
+//                if (task.isSuccessful) {
+//                    Log.d("MainActivity", "Sign-out successful")
+//
+//                    // Clear user data from SharedPreferences
+//                    val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
+//                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//                    editor.clear()
+//                    editor.apply()
+//
+//                    // Start SplashActivity and finish current activity
+//                    val intent = Intent(this@MainActivity, SplashActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//
+//                } else {
+//                    Log.e("MainActivity", "Sign-out failed", task.exception)
+//                    // Handle sign-out failure if needed
+//                }
+//            }
+//        }
+//    }
+    private fun handleSignOut() {
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (account != null) {
+            // Sign out the user
+            GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .signOut()
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Clear user data from SharedPreferences
+                        val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.clear()
+                        editor.apply()
+
+                        // Start SplashActivity and finish current activity
+                        val intent = Intent(this@MainActivity, SplashActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        // Handle sign-out failure if needed
+                        Log.e("MainActivity", "Sign-out failed", task.exception)
+                    }
+                }
+        } else {
+            // Handle the case when no account is signed in
+            Log.d("MainActivity", "No account signed in")
+        }
     }
 
     private fun showSearchLocationFragment() {
