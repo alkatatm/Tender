@@ -90,9 +90,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         setupCardStackView()
         setupFABAndButtons()
         if (savedInstanceState == null) {
-            loadDataStoreAndRefreshData()
+            refreshData(defaultSearch,defaultLocation)
+            Log.d("MainActivity", "RefreshingData")
         } else {
             restoreInstanceState(savedInstanceState)
+            Log.d("MainActivity", "RestoreInstance")
         }
         Log.d("MainActivity", "onCreate finished")
     }
@@ -106,6 +108,9 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             // Re-fetch data or restore UI state
             refreshBusinesses()
         }
+        else
+            refreshData(defaultSearch,defaultLocation)
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
