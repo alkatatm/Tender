@@ -1,16 +1,24 @@
 package com.example.tender
 
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
@@ -68,9 +76,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private lateinit var superlikeButton: LottieAnimationView
     private lateinit var dislikeButton: LottieAnimationView
     private lateinit var menubutton: LottieAnimationView
+    private lateinit var textview: TextView
     private var isDataLoaded = false
     private var currentSwipedPosition = 0
 
+    private var mGoogleSignInClient: GoogleSignInClient? = null
     companion object {
         val SEARCH_TERM_KEY = stringPreferencesKey("searchTerm")
         val LOCATION_KEY = stringPreferencesKey("location")
@@ -83,6 +93,9 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         setContentView(R.layout.activity_main)
         Log.d("MainActivity", "onCreate started")
 
+
+
+//        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         dbHelper = DBHelper(this)
         adapter = BusinessCardAdapter(emptyList()) { business ->
             fetchBusinessDetails(business.alias)
@@ -151,10 +164,14 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         findViewById<LottieAnimationView>(R.id.floatingActionButton).setOnClickListener { view ->
             showPopupMenu(view)
         }
+        val intent: Intent = intent
+        val name: String? = intent.getStringExtra("name")
         likeButton = findViewById(R.id.btnLike)
+        textview = findViewById(R.id.tv_name)
         superlikeButton = findViewById(R.id.btnSuperLike)
         dislikeButton = findViewById(R.id.btnDislike)
         menubutton = findViewById(R.id.floatingActionButton)
+        textview.setText(name)
         likeButton.setOnClickListener {
             likeButton.playAnimation()
             swipeCard(Direction.Right) }
@@ -167,17 +184,6 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         Log.d("MainActivity", "FAB and buttons set up")
     }
 
-    private fun loadDataStoreAndRefreshData() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val preferences = DataStoreManager.getInstance(this@MainActivity).data.first()
-            val search = preferences[SEARCH_TERM_KEY] ?: "defaultSearchValue"
-            val location = preferences[LOCATION_KEY] ?: "defaultLocationValue"
-
-            withContext(Dispatchers.Main) {
-                updateSearchCriteriaDataStore(search, location) // This will refresh the data with the stored preferences
-            }
-        }
-    }
 
     private fun refreshData(searchTerm: String, location: String) {
         defaultSearch = searchTerm
@@ -198,6 +204,7 @@ class MainActivity : AppCompatActivity(), CardStackListener {
                 preferences[SEARCH_TERM_KEY] = search
                 preferences[LOCATION_KEY] = location
             }
+
 
             refreshData(search, location)
         }
@@ -224,6 +231,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         Log.d("MainActivity", "UI updated with fetched data")
 
         findViewById<TextView>(R.id.tvNoMoreRestaurants).visibility = View.VISIBLE
+    }
+
+    private fun getUserId(): String? {
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        return account?.id
     }
 
     private fun swipeCard(direction: Direction) {
@@ -369,11 +381,72 @@ class MainActivity : AppCompatActivity(), CardStackListener {
                     showLikedDislikedFragment()
                     true
                 }
+                R.id.action_choice3 -> {
+                    Log.d("MainActivity", "selected 3")
+                    handleSignOut()
+                    true
+                }
 
                 else -> false
             }
         }
         popup.show()
+    }
+
+
+//    private fun handleSignOut() {
+//        Log.d("MainActivity", "selected 4")
+//        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this) { task ->
+//            runOnUiThread {
+//                Log.d("MainActivity", "selected 5")
+//                if (task.isSuccessful) {
+//                    Log.d("MainActivity", "Sign-out successful")
+//
+//                    // Clear user data from SharedPreferences
+//                    val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
+//                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
+//                    editor.clear()
+//                    editor.apply()
+//
+//                    // Start SplashActivity and finish current activity
+//                    val intent = Intent(this@MainActivity, SplashActivity::class.java)
+//                    startActivity(intent)
+//                    finish()
+//
+//                } else {
+//                    Log.e("MainActivity", "Sign-out failed", task.exception)
+//                    // Handle sign-out failure if needed
+//                }
+//            }
+//        }
+//    }
+    private fun handleSignOut() {
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (account != null) {
+            // Sign out the user
+            GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .signOut()
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Clear user data from SharedPreferences
+                        val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
+                        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+                        editor.clear()
+                        editor.apply()
+
+                        // Start SplashActivity and finish current activity
+                        val intent = Intent(this@MainActivity, SplashActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        // Handle sign-out failure if needed
+                        Log.e("MainActivity", "Sign-out failed", task.exception)
+                    }
+                }
+        } else {
+            // Handle the case when no account is signed in
+            Log.d("MainActivity", "No account signed in")
+        }
     }
 
     private fun showSearchLocationFragment() {
@@ -386,5 +459,36 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         fragment.show(supportFragmentManager, "LikedDislikedFragment")
     }
 
+    private fun loadDataStoreAndRefreshData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val preferences = DataStoreManager.getInstance(this@MainActivity).data.first()
+            val search = preferences[SEARCH_TERM_KEY] ?: "defaultSearchValue"
+            val location = preferences[LOCATION_KEY] ?: "defaultLocationValue"
 
+            withContext(Dispatchers.Main) {
+                updateSearchCriteriaDataStore(search, location) // This will refresh the data with the stored preferences
+            }
+        }
+    }
+//    private fun refreshData(searchTerm: String, location: String) {
+//        // Update your data and refresh the view. Example:
+//        defaultSearch = searchTerm
+//        defaultLocation = location
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val yelpData = getYelpData(defaultSearch, defaultLocation)
+//            withContext(Dispatchers.Main) {
+//                yelpData?.businesses?.let { businesses ->
+//                    adapter.updateData(businesses)
+//                }
+//            }
+//        }
+//    }
+    override fun onBackPressed() {
+        if (!isUserSignedIn()) {
+            super.onBackPressed()
+        }
+    }
+    private fun isUserSignedIn(): Boolean {
+        return GoogleSignIn.getLastSignedInAccount(this) != null
+    }
 }
