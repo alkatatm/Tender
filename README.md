@@ -9,3 +9,6 @@ Submission for CPSC 411, Section 01, Final Project
 * Name: Zedrick Bernal
 * CWID: 887832095
 * Email:schoolguy21@csu.fullerton.edu
+* Name: Edgardo Arteaga
+* CWID: 885891770
+* Email: edgardoarteaga@csu.fullerton.edu
