@@ -1,9 +1,7 @@
 package com.example.tender
 
-import android.Manifest
+
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +10,21 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import java.util.Locale
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchLocationFragment : DialogFragment() {
-
+    companion object {
+        val SEARCH_TERM_KEY = stringPreferencesKey("searchTerm")
+        val LOCATION_KEY = stringPreferencesKey("location")
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -54,23 +59,28 @@ class SearchLocationFragment : DialogFragment() {
     }
 
     private fun loadSavedPreferences(view: View) {
-        val sharedPrefs = requireActivity().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        val savedSearchTerm = sharedPrefs.getString("searchTerm", "")
-        val savedLocation = sharedPrefs.getString("location", "")
+        CoroutineScope(Dispatchers.IO).launch {
+            val preferences = DataStoreManager.getInstance(requireContext()).data.first()
+            val savedSearchTerm = preferences[SEARCH_TERM_KEY] ?: ""
+            val savedLocation = preferences[LOCATION_KEY] ?: ""
 
-        view.findViewById<EditText>(R.id.etSearch)?.setText(savedSearchTerm)
-        view.findViewById<EditText>(R.id.etLocation)?.setText(savedLocation)
+            withContext(Dispatchers.Main) {
+                view.findViewById<EditText>(R.id.etSearch)?.setText(savedSearchTerm)
+                view.findViewById<EditText>(R.id.etLocation)?.setText(savedLocation)
+            }
+        }
     }
 
     private fun sendBackResult(searchTerm: String, location: String) {
-        val sharedPrefs = requireActivity().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        sharedPrefs.edit().apply {
-            putString("searchTerm", searchTerm)
-            putString("location", location)
-            apply()
+        CoroutineScope(Dispatchers.IO).launch {
+            DataStoreManager.getInstance(requireContext()).edit { preferences ->
+                preferences[SEARCH_TERM_KEY] = searchTerm
+                preferences[LOCATION_KEY] = location
+            }
+            withContext(Dispatchers.Main) {
+                (activity as? MainActivity)?.updateSearchCriteriaDataStore(searchTerm, location)
+            }
         }
-
-        (activity as? MainActivity)?.updateSearchCriteria(searchTerm, location)
         dismiss()
     }
 }

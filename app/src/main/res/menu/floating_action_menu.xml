@@ -2,9 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_choice1"
-        android:title="Search/Location"/>
+        android:title="@string/search_location"/>
     <item
         android:id="@+id/action_choice2"
+        android:title="@string/liked_disliked"/>
         android:title="Liked/Disliked"/>
     <item
         android:id="@+id/action_choice3"

@@ -2,7 +2,6 @@ package com.example.tender
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -11,16 +10,20 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import com.yuyakaido.android.cardstackview.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -33,9 +36,9 @@ data class Business(
     val name: String,
     val alias : String,
     val location: Location,
-    val rating: Double,  // Assuming rating is a double
-    val image_url: String,  // URL to the business image
-    var reviews: List<Review>,// Assuming a list of reviews
+    val rating: Double,
+    val image_url: String,
+    var reviews: List<Review>,
     val photos: List<String>,
     val coordinates: Coordinates
 )
@@ -59,6 +62,7 @@ data class  Coordinates(
     val latitude: Double,
     val longitude: Double
 )
+
 class MainActivity : AppCompatActivity(), CardStackListener {
     private val client = OkHttpClient()
     private val apiKey = "ZfWb7NOfgmB3jlHdqQtcxW-XlFPkVTggHBL8Ddr5S2s_4mAhCecID02p_np2D2Rz7C03nA01ZUxhdYFd_qMPPb_O2I3fsuJlapLfShGTGCYNuW2NpVKwE2TvxTRUZXYx"
@@ -76,9 +80,15 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private var currentSwipedPosition = 0
 
     private var mGoogleSignInClient: GoogleSignInClient? = null
+    companion object {
+        val SEARCH_TERM_KEY = stringPreferencesKey("searchTerm")
+        val LOCATION_KEY = stringPreferencesKey("location")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Install the splash screen
+        installSplashScreen()
         setContentView(R.layout.activity_main)
         Log.d("MainActivity", "onCreate started")
 
@@ -90,12 +100,13 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             fetchBusinessDetails(business.alias)
         }
         setupCardStackView()
-        loadPreferencesAndRefreshData()
         setupFABAndButtons()
         if (savedInstanceState == null) {
-            loadPreferencesAndRefreshData()
+            refreshData(defaultSearch,defaultLocation)
+            Log.d("MainActivity", "RefreshingData")
         } else {
             restoreInstanceState(savedInstanceState)
+            Log.d("MainActivity", "RestoreInstance")
         }
         Log.d("MainActivity", "onCreate finished")
     }
@@ -109,6 +120,9 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             // Re-fetch data or restore UI state
             refreshBusinesses()
         }
+        else
+            refreshData(defaultSearch,defaultLocation)
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -128,7 +142,7 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         }
         setContentView(R.layout.activity_main)
         setupCardStackView()
-        loadPreferencesAndRefreshData()
+        loadDataStoreAndRefreshData()
         setupFABAndButtons()
 
     }
@@ -169,30 +183,32 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         Log.d("MainActivity", "FAB and buttons set up")
     }
 
-    private fun loadPreferencesAndRefreshData() {
 
-        val userId = getUserId()
-        val preferencesKey = "UserPreferences_$userId"
-
-        val sharedPrefs = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        defaultSearch = sharedPrefs.getString("$preferencesKey-searchTerm", defaultSearch) ?: defaultSearch
-        defaultLocation = sharedPrefs.getString("$preferencesKey-location", defaultLocation) ?: defaultLocation
-        refreshBusinesses()
-        Log.d("MainActivity", "Preferences loaded and data refresh initiated")
+    private fun refreshData(searchTerm: String, location: String) {
+        defaultSearch = searchTerm
+        defaultLocation = location
+        CoroutineScope(Dispatchers.IO).launch {
+            val yelpData = getYelpData(defaultSearch, defaultLocation)
+            withContext(Dispatchers.Main) {
+                yelpData?.businesses?.let { businesses ->
+                    adapter.updateData(businesses)
+                }
+            }
+        }
     }
 
-    fun updateSearchCriteria(search: String, location: String) {
-        val userId = getUserId()
-        val preferencesKey = "UserPreferences_$userId"
-        // Save the new criteria to preferences
-        val editor = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE).edit()
-        editor.putString("$preferencesKey-searchTerm", search)
-        editor.putString("$preferencesKey-location", location)
-        editor.apply()
+    fun updateSearchCriteriaDataStore(search: String, location: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            DataStoreManager.getInstance(this@MainActivity).edit { preferences ->
+                preferences[SEARCH_TERM_KEY] = search
+                preferences[LOCATION_KEY] = location
+            }
 
-        // Refresh data with new criteria
-        refreshData(search, location)
+
+            refreshData(search, location)
+        }
     }
+
     private fun refreshBusinesses() {
         CoroutineScope(Dispatchers.IO).launch {
             // Fetch liked names first
@@ -305,7 +321,6 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     }
 
     // CardStackListener methods
-    // CardStackListener methods
     override fun onCardSwiped(direction: Direction?) {
         if (direction == Direction.Right || direction == Direction.Left) {
             val swipeDirectionLiked = direction == Direction.Right
@@ -324,7 +339,6 @@ class MainActivity : AppCompatActivity(), CardStackListener {
                         val likedStatus = if (swipeDirectionLiked) 1 else 0
                         dbHelper.addOrUpdateBusiness(fullBusinessDetails, likedStatus)
 
-                        // Log the action
                         Log.d("MainActivity", "Swiped ${if (swipeDirectionLiked) "liked" else "disliked"}: ${it.name}")
                     } ?: run {
                         Log.e("MainActivity", "Failed to fetch business details for: ${business.name}")
@@ -436,13 +450,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
 
     private fun showSearchLocationFragment() {
         val fragment = SearchLocationFragment()
-        // You can add logic here to pass data to the fragment if needed
         fragment.show(supportFragmentManager, "SearchLocationFragment")
     }
 
     private fun showLikedDislikedFragment() {
         val fragment = LikedDislikedFragment()
-        // You can add logic here to pass data to the fragment if needed
         fragment.show(supportFragmentManager, "LikedDislikedFragment")
     }
 
