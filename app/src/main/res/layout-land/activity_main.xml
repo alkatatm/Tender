@@ -12,6 +12,10 @@
         android:visibility="gone"
         android:layout_centerInParent="true" />
 
+
+
+
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -19,6 +23,27 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_name"-->
+<!--        android:layout_width="258dp"-->
+<!--        android:layout_height="67dp"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:background="@color/black"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="18sp" />-->
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="258dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/rounded_corner_background"
+        android:fontFamily="sans-serif"
+        android:padding="16dp"
+        android:text="Stylish Text"
+        android:textColor="@android:color/white"
+        android:textSize="24sp" />
 
     <LinearLayout
         android:id="@+id/buttonContainer"
