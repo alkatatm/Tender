@@ -170,18 +170,24 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     }
 
     private fun loadPreferencesAndRefreshData() {
+
+        val userId = getUserId()
+        val preferencesKey = "UserPreferences_$userId"
+
         val sharedPrefs = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        defaultSearch = sharedPrefs.getString("searchTerm", defaultSearch) ?: defaultSearch
-        defaultLocation = sharedPrefs.getString("location", defaultLocation) ?: defaultLocation
+        defaultSearch = sharedPrefs.getString("$preferencesKey-searchTerm", defaultSearch) ?: defaultSearch
+        defaultLocation = sharedPrefs.getString("$preferencesKey-location", defaultLocation) ?: defaultLocation
         refreshBusinesses()
         Log.d("MainActivity", "Preferences loaded and data refresh initiated")
     }
 
     fun updateSearchCriteria(search: String, location: String) {
+        val userId = getUserId()
+        val preferencesKey = "UserPreferences_$userId"
         // Save the new criteria to preferences
         val editor = getSharedPreferences("AppPreferences", Context.MODE_PRIVATE).edit()
-        editor.putString("searchTerm", search)
-        editor.putString("location", location)
+        editor.putString("$preferencesKey-searchTerm", search)
+        editor.putString("$preferencesKey-location", location)
         editor.apply()
 
         // Refresh data with new criteria
@@ -208,6 +214,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         Log.d("MainActivity", "UI updated with fetched data")
 
         findViewById<TextView>(R.id.tvNoMoreRestaurants).visibility = View.VISIBLE
+    }
+
+    private fun getUserId(): String? {
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        return account?.id
     }
 
     private fun swipeCard(direction: Direction) {
@@ -447,5 +458,13 @@ class MainActivity : AppCompatActivity(), CardStackListener {
                 }
             }
         }
+    }
+    override fun onBackPressed() {
+        if (!isUserSignedIn()) {
+            super.onBackPressed()
+        }
+    }
+    private fun isUserSignedIn(): Boolean {
+        return GoogleSignIn.getLastSignedInAccount(this) != null
     }
 }
