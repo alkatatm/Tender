@@ -2,6 +2,7 @@ package com.example.tender
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -458,19 +459,30 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         fragment.show(supportFragmentManager, "LikedDislikedFragment")
     }
 
-    private fun refreshData(searchTerm: String, location: String) {
-        // Update your data and refresh the view. Example:
-        defaultSearch = searchTerm
-        defaultLocation = location
+    private fun loadDataStoreAndRefreshData() {
         CoroutineScope(Dispatchers.IO).launch {
-            val yelpData = getYelpData(defaultSearch, defaultLocation)
+            val preferences = DataStoreManager.getInstance(this@MainActivity).data.first()
+            val search = preferences[SEARCH_TERM_KEY] ?: "defaultSearchValue"
+            val location = preferences[LOCATION_KEY] ?: "defaultLocationValue"
+
             withContext(Dispatchers.Main) {
-                yelpData?.businesses?.let { businesses ->
-                    adapter.updateData(businesses)
-                }
+                updateSearchCriteriaDataStore(search, location) // This will refresh the data with the stored preferences
             }
         }
     }
+//    private fun refreshData(searchTerm: String, location: String) {
+//        // Update your data and refresh the view. Example:
+//        defaultSearch = searchTerm
+//        defaultLocation = location
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val yelpData = getYelpData(defaultSearch, defaultLocation)
+//            withContext(Dispatchers.Main) {
+//                yelpData?.businesses?.let { businesses ->
+//                    adapter.updateData(businesses)
+//                }
+//            }
+//        }
+//    }
     override fun onBackPressed() {
         if (!isUserSignedIn()) {
             super.onBackPressed()
