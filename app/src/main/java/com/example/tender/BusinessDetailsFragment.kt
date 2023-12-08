@@ -75,7 +75,6 @@ class BusinessDetailsFragment : DialogFragment() {
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
             } else {
                 // Handle the case where business or coordinates are null
-                // You might want to log an error or show a message
             }
         }
 

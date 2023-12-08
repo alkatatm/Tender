@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">テンダー</string>
+    <string name="no_more_restaurants">これ以上のレストランはありません。\n検索設定を更新してください</string>
+    <string name="confirm">確認</string>
+    <string name="search">検索</string>
+    <string name="location">場所</string>
+    <string name="search_location">検索/場所</string>
+    <string name="liked_disliked">好き/嫌い</string>
+</resources>
