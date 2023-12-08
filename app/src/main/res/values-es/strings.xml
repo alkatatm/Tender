@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Tender</string>
+    <string name="no_more_restaurants">No hay más restaurantes disponibles,\npor favor actualiza las configuraciones de búsqueda</string>
+    <string name="confirm">Confirmar</string>
+    <string name="search">Buscar</string>
+    <string name="location">Ubicación</string>
+    <string name="search_location">Buscar/Ubicación</string>
+    <string name="liked_disliked">Gustados/No gustados</string>
+</resources>

@@ -1,0 +1,148 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools react-dom.development.js:29804
+Error in parsing value for ‘image-rendering’.  Declaration dropped. localhost:3000:33:19
+Unknown property ‘behavior’.  Declaration dropped. localhost:3000:119:11
+Expected ‘none’, URL, or filter function but found ‘progid’.  Error in parsing value for ‘filter’.  Declaration dropped. localhost:3000:534:10
+Covid Data:  
+Object {  }
+CovidDataTable.js:10
+TypeError: a.default.detectStore(...) is undefined h1-check.js:1:1301
+Warning: Failed prop type: Invalid prop `children` supplied to `ForwardRef(Typography)`, expected a ReactNode.
+Typography@http://localhost:3000/static/js/bundle.js:2138:22
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+CardContent@http://localhost:3000/static/js/bundle.js:998:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+Paper@http://localhost:3000/static/js/bundle.js:1168:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+Card@http://localhost:3000/static/js/bundle.js:1074:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+StatisticsDisplay@http://localhost:3000/static/js/bundle.js:526:63
+div
+Paper@http://localhost:3000/static/js/bundle.js:1168:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+Dashboard@http://localhost:3000/static/js/bundle.js:409:19
+RenderedRoute@http://localhost:3000/static/js/bundle.js:62992:7
+Routes@http://localhost:3000/static/js/bundle.js:63612:7
+Router@http://localhost:3000/static/js/bundle.js:63554:7
+BrowserRouter@http://localhost:3000/static/js/bundle.js:61603:7
+App
+Provider@http://localhost:3000/static/js/bundle.js:58489:18 react.development.js:173
+Uncaught Error: Objects are not valid as a React child (found: object with keys {fips, country, state, county, hsa, hsaName, level, lat, locationId, long, population, hsaPopulation, metrics, riskLevels, cdcTransmissionLevel, communityLevels, actuals, annotations, lastUpdatedDate, url}). If you meant to render a collection of children, use an array instead.
+    throwOnInvalidObjectType React
+    reconcileChildFibers bundle.js:46105
+    React 13
+53 react-dom.development.js:14848
+Covid Data:  
+Array(53) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+CovidDataTable.js:10
+Warning: validateDOMNesting(...): Whitespace text nodes cannot appear as a child of <tbody>. Make sure you don't have any extra whitespace between tags on each line of your source code.
+tbody
+TableBody@http://localhost:3000/static/js/bundle.js:1278:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+table
+Table@http://localhost:3000/static/js/bundle.js:1870:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+Paper@http://localhost:3000/static/js/bundle.js:1168:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+TableContainer@http://localhost:3000/static/js/bundle.js:1587:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+CovidDataTable@http://localhost:3000/static/js/bundle.js:198:77
+div
+div
+Dashboard@http://localhost:3000/static/js/bundle.js:409:19
+RenderedRoute@http://localhost:3000/static/js/bundle.js:62992:7
+Routes@http://localhost:3000/static/js/bundle.js:63612:7
+Router@http://localhost:3000/static/js/bundle.js:63554:7
+BrowserRouter@http://localhost:3000/static/js/bundle.js:61603:7
+App
+Provider@http://localhost:3000/static/js/bundle.js:58489:18 react-dom.development.js:50
+Uncaught Error: Objects are not valid as a React child (found: object with keys {fips, country, state, county, hsa, hsaName, level, lat, locationId, long, population, hsaPopulation, metrics, riskLevels, cdcTransmissionLevel, communityLevels, actuals, annotations, lastUpdatedDate, url}). If you meant to render a collection of children, use an array instead.
+    throwOnInvalidObjectType React
+    reconcileChildFibers bundle.js:46105
+    React 14
+53 react-dom.development.js:14848
+Covid Data:  
+Array(53) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+CovidDataTable.js:10
+The above error occurred in the <h2> component:
+
+h2
+Typography@http://localhost:3000/static/js/bundle.js:2138:22
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+CardContent@http://localhost:3000/static/js/bundle.js:998:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+Paper@http://localhost:3000/static/js/bundle.js:1168:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+Card@http://localhost:3000/static/js/bundle.js:1074:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+StatisticsDisplay@http://localhost:3000/static/js/bundle.js:526:63
+div
+Paper@http://localhost:3000/static/js/bundle.js:1168:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+Dashboard@http://localhost:3000/static/js/bundle.js:409:19
+RenderedRoute@http://localhost:3000/static/js/bundle.js:62992:7
+Routes@http://localhost:3000/static/js/bundle.js:63612:7
+Router@http://localhost:3000/static/js/bundle.js:63554:7
+BrowserRouter@http://localhost:3000/static/js/bundle.js:61603:7
+App
+Provider@http://localhost:3000/static/js/bundle.js:58489:18
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. 53 react-dom.development.js:18651
+Uncaught Error: Objects are not valid as a React child (found: object with keys {fips, country, state, county, hsa, hsaName, level, lat, locationId, long, population, hsaPopulation, metrics, riskLevels, cdcTransmissionLevel, communityLevels, actuals, annotations, lastUpdatedDate, url}). If you meant to render a collection of children, use an array instead.
+    throwOnInvalidObjectType React
+    reconcileChildFibers bundle.js:46105
+    React 11
+react-dom.development.js:14848
+Covid Data:  
+Array(53) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+CovidDataTable.js:10
+Covid Data:  
+Array(53) [ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+CovidDataTable.js:10
+Uncaught TypeError: covidData.actuals is undefined
+    StatisticsDisplay StatisticsDisplay.js:26
+    React 14
+    performReactRefresh react-refresh-runtime.development.js:262
+    performReactRefresh react-refresh-runtime.development.js:254
+    node_modules bundle.js:5227
+StatisticsDisplay.js:26
+Uncaught TypeError: covidData.actuals is undefined
+    StatisticsDisplay StatisticsDisplay.js:26
+    React 15
+    performReactRefresh react-refresh-runtime.development.js:262
+    performReactRefresh react-refresh-runtime.development.js:254
+    node_modules bundle.js:5227
+StatisticsDisplay.js:26
+The above error occurred in the <StatisticsDisplay> component:
+
+StatisticsDisplay@http://localhost:3000/main.851220a29ed2a7b02037.hot-update.js:38:63
+div
+Paper@http://localhost:3000/static/js/bundle.js:1168:17
+WithStyles@http://localhost:3000/static/js/bundle.js:4562:25
+div
+Dashboard@http://localhost:3000/static/js/bundle.js:409:19
+RenderedRoute@http://localhost:3000/static/js/bundle.js:62992:7
+Routes@http://localhost:3000/static/js/bundle.js:63612:7
+Router@http://localhost:3000/static/js/bundle.js:63554:7
+BrowserRouter@http://localhost:3000/static/js/bundle.js:61603:7
+App
+Provider@http://localhost:3000/static/js/bundle.js:58489:18
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries. react-dom.development.js:18651
+Uncaught TypeError: covidData.actuals is undefined
+    StatisticsDisplay StatisticsDisplay.js:26
+    React 12
+    performReactRefresh react-refresh-runtime.development.js:262
+    performReactRefresh react-refresh-runtime.development.js:254
+    node_modules bundle.js:5227
+StatisticsDisplay.js:26

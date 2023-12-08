@@ -1,9 +1,18 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
+    <!-- Base application theme -->
     <style name="Base.Theme.Tender" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- Customize your theme here -->
     </style>
 
-    <style name="Theme.Tender" parent="Base.Theme.Tender" />
+    <!-- Splash Screen Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/orange_10.0</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.Tender</item>
+    </style>
+
+    <!-- Main Theme -->
+    <style name="Theme.Tender" parent="Base.Theme.Tender">
+        <!-- Customize your main theme here -->
+    </style>
 </resources>
