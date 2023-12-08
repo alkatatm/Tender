@@ -393,33 +393,6 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         popup.show()
     }
 
-
-//    private fun handleSignOut() {
-//        Log.d("MainActivity", "selected 4")
-//        mGoogleSignInClient?.signOut()?.addOnCompleteListener(this) { task ->
-//            runOnUiThread {
-//                Log.d("MainActivity", "selected 5")
-//                if (task.isSuccessful) {
-//                    Log.d("MainActivity", "Sign-out successful")
-//
-//                    // Clear user data from SharedPreferences
-//                    val sharedPreferences = getSharedPreferences("userdata", Context.MODE_PRIVATE)
-//                    val editor: SharedPreferences.Editor = sharedPreferences.edit()
-//                    editor.clear()
-//                    editor.apply()
-//
-//                    // Start SplashActivity and finish current activity
-//                    val intent = Intent(this@MainActivity, SplashActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
-//
-//                } else {
-//                    Log.e("MainActivity", "Sign-out failed", task.exception)
-//                    // Handle sign-out failure if needed
-//                }
-//            }
-//        }
-//    }
     private fun handleSignOut() {
         val account = GoogleSignIn.getLastSignedInAccount(this)
         if (account != null) {
