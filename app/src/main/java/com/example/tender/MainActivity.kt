@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.yuyakaido.android.cardstackview.*
 import kotlinx.coroutines.*
@@ -79,6 +80,7 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private lateinit var textview: TextView
     private var isDataLoaded = false
     private var currentSwipedPosition = 0
+    private lateinit var viewModel: TenderViewModel
 
     private var mGoogleSignInClient: GoogleSignInClient? = null
     companion object {
@@ -93,7 +95,13 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         setContentView(R.layout.activity_main)
         Log.d("MainActivity", "onCreate started")
 
+        viewModel = ViewModelProvider(this).get(TenderViewModel::class.java)
 
+        // Check if data is already available and use it
+        if (savedInstanceState != null) {
+            viewModel.search_term = savedInstanceState.getString("searchTerm", "defaultSearchValue") ?: "defaultSearchValue"
+            viewModel.location_term = savedInstanceState.getString("location", "defaultLocationValue") ?: "defaultLocationValue"
+        }
 
 //        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         dbHelper = DBHelper(this)
@@ -128,10 +136,10 @@ class MainActivity : AppCompatActivity(), CardStackListener {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("defaultSearch", defaultSearch)
-        outState.putString("defaultLocation", defaultLocation)
-        outState.putBoolean("isDataLoaded", isDataLoaded)
+        outState.putString("searchTerm", viewModel.search_term)
+        outState.putString("location", viewModel.location_term)
     }
+
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
@@ -435,8 +443,8 @@ class MainActivity : AppCompatActivity(), CardStackListener {
     private fun loadDataStoreAndRefreshData() {
         CoroutineScope(Dispatchers.IO).launch {
             val preferences = DataStoreManager.getInstance(this@MainActivity).data.first()
-            val search = preferences[SEARCH_TERM_KEY] ?: "defaultSearchValue"
-            val location = preferences[LOCATION_KEY] ?: "defaultLocationValue"
+            val search = viewModel.search_term
+            val location = viewModel.location_term
 
             withContext(Dispatchers.Main) {
                 updateSearchCriteriaDataStore(search, location) // This will refresh the data with the stored preferences
