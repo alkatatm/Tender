@@ -1,42 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- TextView for displaying a message when no more restaurants are available -->
     <TextView
         android:id="@+id/tvNoMoreRestaurants"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No more restaurants available,\nplease update search settings"
+        android:text="@string/no_more_restaurants"
         android:visibility="gone"
-        android:layout_centerInParent="true" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
-
-
-
-
+    <!-- Toolbar for the app -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme" />
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/tv_name"-->
-<!--        android:layout_width="258dp"-->
-<!--        android:layout_height="67dp"-->
-<!--        android:layout_gravity="center_horizontal"-->
-<!--        android:background="@color/black"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:textSize="18sp" />-->
+    <!-- Container for like, super like, and dislike buttons -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
+        <!-- LottieAnimationView for dislike button -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/btnDislike"
+            android:layout_width="128dp"
+            android:layout_height="72dp"
+            app:lottie_rawRes="@raw/dislike" />
+
+        <!-- LottieAnimationView for super like button -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/btnSuperLike"
+            android:layout_width="128dp"
+            android:layout_height="72dp"
+            app:lottie_rawRes="@raw/superlike"
+            android:layout_marginEnd="8dp" />
+
+        <!-- LottieAnimationView for like button -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/btnLike"
+            android:layout_width="128dp"
+            android:layout_height="72dp"
+            app:lottie_rawRes="@raw/like2"
+            android:layout_marginEnd="8dp" />
+
+    </LinearLayout>
+
+    <!-- LottieAnimationView for a floating action button -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/floatingActionButton"
+        android:layout_width="131dp"
+        android:layout_height="54dp"
+        app:lottie_rawRes="@raw/menu2"
+        app:layout_constraintTop_toTopOf="@id/toolbar"
+        app:layout_constraintEnd_toEndOf="@id/toolbar"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"/>
+
+    <!-- TextView for displaying the name -->
     <TextView
         android:id="@+id/tv_name"
-        android:layout_width="258dp"
-        android:layout_height="65dp"
+        android:layout_width="wrap_content"
+        android:layout_height="63dp"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/rounded_corner_background"
         android:fontFamily="sans-serif"
@@ -45,61 +90,16 @@
         android:textColor="@android:color/white"
         android:textSize="24sp" />
 
-    <LinearLayout
-        android:id="@+id/buttonContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/toolbar"
-        android:orientation="vertical"
-        android:gravity="end"
-        android:padding="8dp">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/btnLike"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:lottie_rawRes="@raw/like2"
-            android:layout_marginBottom="8dp" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/btnSuperLike"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:lottie_rawRes="@raw/superlike"
-            android:layout_marginBottom="8dp" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/btnDislike"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:lottie_rawRes="@raw/dislike" />
-
-    </LinearLayout>
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/floatingActionButton"
-        android:layout_width="131dp"
-        android:layout_height="54dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="7dp"
-        android:layout_marginBottom="4dp"
-        app:lottie_rawRes="@raw/menu2" />
-
-
+    <!-- CardStackView for displaying card-based content -->
     <com.yuyakaido.android.cardstackview.CardStackView
         android:id="@+id/card_stack_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toStartOf="@+id/buttonContainer"
-        android:layout_below="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintBottom_toTopOf="@id/buttonContainer"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginEnd="16dp"/>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
