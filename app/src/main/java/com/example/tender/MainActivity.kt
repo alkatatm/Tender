@@ -1,5 +1,6 @@
 package com.example.tender
 
+import LoginFragment
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -390,8 +391,7 @@ class MainActivity : AppCompatActivity(), CardStackListener {
                     true
                 }
                 R.id.action_choice3 -> {
-                    Log.d("MainActivity", "selected 3")
-                    handleSignOut()
+                    showLoginFragment()
                     true
                 }
 
@@ -440,6 +440,11 @@ class MainActivity : AppCompatActivity(), CardStackListener {
         fragment.show(supportFragmentManager, "LikedDislikedFragment")
     }
 
+    private fun showLoginFragment() {
+        val fragment = LoginFragment()
+        fragment.show(supportFragmentManager, "LoginFragment")
+    }
+
     private fun loadDataStoreAndRefreshData() {
         CoroutineScope(Dispatchers.IO).launch {
             val preferences = DataStoreManager.getInstance(this@MainActivity).data.first()
@@ -451,18 +456,6 @@ class MainActivity : AppCompatActivity(), CardStackListener {
             }
         }
     }
-//    private fun refreshData(searchTerm: String, location: String) {
-//        // Update your data and refresh the view. Example:
-//        defaultSearch = searchTerm
-//        defaultLocation = location
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val yelpData = getYelpData(defaultSearch, defaultLocation)
-//            withContext(Dispatchers.Main) {
-//                yelpData?.businesses?.let { businesses ->
-//                    adapter.updateData(businesses)
-//                }
-//            }
-//        }
 //    }
     override fun onBackPressed() {
         if (!isUserSignedIn()) {
