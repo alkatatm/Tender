@@ -68,7 +68,7 @@ data class  Coordinates(
 
 class MainActivity : AppCompatActivity(), CardStackListener {
     private val client = OkHttpClient()
-    private val apiKey = "ZfWb7NOfgmB3jlHdqQtcxW-XlFPkVTggHBL8Ddr5S2s_4mAhCecID02p_np2D2Rz7C03nA01ZUxhdYFd_qMPPb_O2I3fsuJlapLfShGTGCYNuW2NpVKwE2TvxTRUZXYx"
+    private val apiKey = "API_KEY"
     private var defaultSearch = "food"
     private var defaultLocation = "Fullerton"
     private lateinit var cardStackView: CardStackView
